@@ -1,0 +1,4 @@
+suites:
+    behavior_suite:
+        namespace: Tidal\PhpSpec\Behavior
+        psr4_prefix: Tidal\PhpSpec\Behavior
