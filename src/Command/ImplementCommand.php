@@ -17,4 +17,10 @@ use Symfony\Component\Console\Command\Command;
  */
 class ImplementCommand extends Command
 {
+    public const NAME = 'behavior:implement';
+
+    public function __construct()
+    {
+        parent::__construct(self::NAME);
+    }
 }

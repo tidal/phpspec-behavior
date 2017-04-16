@@ -28,4 +28,9 @@ class ImplementCommandSpec extends ObjectBehavior
     {
         $this->shouldHaveType(Command::class);
     }
+
+    function it_has_a_name()
+    {
+        $this->getName()->shouldReturn(ImplementCommand::NAME);
+    }
 }
