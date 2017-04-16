@@ -10,6 +10,7 @@ namespace spec\Tidal\PhpSpec\Behavior;
 
 use Tidal\PhpSpec\Behavior\Extension;
 use PhpSpec\ObjectBehavior;
+use PhpSpec\Extension as ExtensionInterface;
 
 /**
 * class spec\Tidal\PhpSpec\Behavior\ExtensionSpec
@@ -20,5 +21,10 @@ class ExtensionSpec extends ObjectBehavior
     function it_is_initializable()
     {
         $this->shouldHaveType(Extension::class);
+    }
+
+    function it_is_a_phpspec_extension()
+    {
+        $this->shouldImplement(ExtensionInterface::class);
     }
 }
