@@ -10,9 +10,20 @@
 
 namespace Tidal\PhpSpec\Behavior;
 
+use PhpSpec\Extension as ExtensionInterface;
+use PhpSpec\ServiceContainer;
+
 /**
  * class Tidal\PhpSpec\Behavior\Extension
  */
-class Extension
+class Extension implements ExtensionInterface
 {
+    /**
+     * @param ServiceContainer $container
+     * @param array            $params
+     */
+    public function load(ServiceContainer $container, array $params)
+    {
+
+    }
 }
