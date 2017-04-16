@@ -24,6 +24,13 @@ class Extension implements ExtensionInterface
      */
     public function load(ServiceContainer $container, array $params)
     {
+        $this->registerCommands($container);
+    }
 
+    private function registerCommands(ServiceContainer $container)
+    {
+        $container->define('console.commands.behavior_implement', function () use ($container) {
+
+        });
     }
 }
