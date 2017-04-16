@@ -10,6 +10,7 @@ namespace spec\Tidal\PhpSpec\Behavior\Command;
 
 use Tidal\PhpSpec\Behavior\Command\ImplementCommand;
 use PhpSpec\ObjectBehavior;
+use Symfony\Component\Console\Command\Command;
 use Prophecy\Argument;
 
 /**
@@ -21,5 +22,10 @@ class ImplementCommandSpec extends ObjectBehavior
     function it_is_initializable()
     {
         $this->shouldHaveType(ImplementCommand::class);
+    }
+
+    function it_is_a_symfony_command()
+    {
+        $this->shouldHaveType(Command::class);
     }
 }

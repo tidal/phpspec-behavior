@@ -10,9 +10,11 @@
 
 namespace Tidal\PhpSpec\Behavior\Command;
 
+use Symfony\Component\Console\Command\Command;
+
 /**
  * class Tidal\PhpSpec\Behavior\Command\ImplementCommand
  */
-class ImplementCommand
+class ImplementCommand extends Command
 {
 }
