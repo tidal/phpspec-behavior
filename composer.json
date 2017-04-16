@@ -10,13 +10,16 @@
       "email": "timomichna@yahoo.de"
     }
   ],
+  "minimum-stability": "alpha",
+  "prefer-stable": true,
   "require": {
-    "php": ">=7.1.0"
+    "php": ">=7.1.0",
+    "phpspec/phpspec": "^3.0"
   },
   "require-dev": {
-    "phpspec/phpspec": "^3.0",
     "behat/behat": "^3.0,>=3.0.4",
-    "rmiller/caser": "^0.1"
+    "rmiller/caser": "^0.1",
+    "memio/spec-gen": "^0.7"
   },
   "autoload": {
     "psr-4": {
