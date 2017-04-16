@@ -1,0 +1,26 @@
+{
+  "name": "tidal/phpspec-behavior",
+  "description": "An extension for PhpSpec to generate behavior (traits) from interfaces",
+  "keywords": ["phpspec", "extension", "code-generation", "code-generator", "behavior", "trait", "interface", "implementation", "test", "bdd", "php7"],
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Timo Michna",
+      "email": "timomichna@yahoo.de"
+    }
+  ],
+  "require": {
+    "php": ">=7.1.0"
+  },
+  "require-dev": {
+    "phpspec/phpspec": "^3.0",
+    "behat/behat": "^3.0,>=3.0.4",
+    "rmiller/caser": "^0.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Tidal\\PhpSpec\\Behavior\\": "src"
+    }
+  }
+}
