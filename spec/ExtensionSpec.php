@@ -9,10 +9,12 @@
 namespace spec\Tidal\PhpSpec\Behavior;
 
 use Tidal\PhpSpec\Behavior\Extension;
+use Tidal\PhpSpec\Behavior\Command\ImplementCommand;
 use PhpSpec\ObjectBehavior;
 use PhpSpec\Extension as ExtensionInterface;
 use PhpSpec\ServiceContainer;
 use Prophecy\Argument;
+use Symfony\Component\Console\Command\Command;
 
 /**
 * class spec\Tidal\PhpSpec\Behavior\ExtensionSpec
@@ -41,6 +43,19 @@ class ExtensionSpec extends ObjectBehavior
             ->load($container, []);
         $container
             ->define(self::COMMAND_IDS['implement'], Argument::type('callable'))
+            ->shouldHaveBeenCalled();
+    }
+
+    function it_registers_the_behavior_implement_command(ServiceContainer $container, ImplementCommand $command)
+    {
+        $this->setImplementCommand($command);
+        $this->load($container, []);
+
+        $container
+            ->define(self::COMMAND_IDS['implement'], Argument::that(function (callable $callback) use ($container) {
+                $command = $callback($container);
+                return is_object($command) && is_subclass_of($command, Command::class);
+            }))
             ->shouldHaveBeenCalled();
     }
 }

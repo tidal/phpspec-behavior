@@ -12,12 +12,25 @@ namespace Tidal\PhpSpec\Behavior;
 
 use PhpSpec\Extension as ExtensionInterface;
 use PhpSpec\ServiceContainer;
+use Tidal\PhpSpec\Behavior\Command\ImplementCommand;
+use Symfony\Component\Console\Command\Command;
 
 /**
  * class Tidal\PhpSpec\Behavior\Extension
  */
 class Extension implements ExtensionInterface
 {
+    private const IMPLEMENT_KEY = 'implement';
+
+    public const COMMAND_IDS = [
+        self::IMPLEMENT_KEY => 'console.commands.behavior_implement'
+    ] ;
+
+    /**
+     * @var Command
+     */
+    private $implementCommand;
+
     /**
      * @param ServiceContainer $container
      * @param array            $params
@@ -29,8 +42,26 @@ class Extension implements ExtensionInterface
 
     private function registerCommands(ServiceContainer $container)
     {
-        $container->define('console.commands.behavior_implement', function () use ($container) {
-
+        $container->define(self::COMMAND_IDS['implement'], function () use ($container) {
+            return $this->implementCommand;
         });
+    }
+
+    /**
+     * @param Command $implementCommand
+     */
+    public function setImplementCommand(Command $implementCommand)
+    {
+        $this->implementCommand = $implementCommand;
+    }
+
+    /**
+     * @return Command
+     */
+    public function getImplementCommand(): Command
+    {
+        return isset($this->implementCommand)
+            ? $this->implementCommand
+            : $this->implementCommand = new ImplementCommand();
     }
 }
