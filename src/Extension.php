@@ -106,7 +106,10 @@ class Extension implements ExtensionInterface
      */
     private static function createConsoleWriter(ConsoleIO $io)
     {
-        return new Writer($io);
+        $writer = new Writer();
+        $writer->setConsoleIO($io);
+
+        return $writer;
     }
 
     /**
