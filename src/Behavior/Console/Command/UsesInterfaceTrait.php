@@ -10,7 +10,6 @@
 namespace Tidal\PhpSpec\BehaviorExtension\Behavior\Console\Command;
 
 use Throwable;
-
 use Tidal\PhpSpec\BehaviorExtension\Exception\NoInterfaceException;
 use Tidal\PhpSpec\ConsoleExtension\Contract\WriterInterface;
 
