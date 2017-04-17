@@ -18,7 +18,7 @@ trait UsesBehaviorTrait
      * @param string $traitName
      * @return bool
      */
-    public function validateTrait(?string $traitName): bool
+    public function validateTrait(? string $traitName) : bool
     {
         return trait_exists($traitName);
     }
