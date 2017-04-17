@@ -29,7 +29,7 @@ class Extension implements ExtensionInterface
 
     public const COMMAND_IDS = [
         self::IMPLEMENT_KEY => 'console.commands.behavior_implement'
-    ] ;
+    ];
 
     private const IO_ID = 'console.io';
 
@@ -50,14 +50,14 @@ class Extension implements ExtensionInterface
     private function registerCommands(ServiceContainer $container)
     {
         $container->define(
-            self::COMMAND_IDS[self::IMPLEMENT_KEY],
-            function () use ($container) {
+            self::COMMAND_IDS[ self::IMPLEMENT_KEY ],
+            function() use ($container) {
                 return $this->getImplementCommand(
                     self::retrieveConsoleWriter($container),
                     self::createConfigurator()
                 );
             },
-            ['console.commands']
+            [ 'console.commands' ]
         );
     }
 

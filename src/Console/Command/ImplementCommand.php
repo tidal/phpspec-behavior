@@ -40,7 +40,7 @@ class ImplementCommand extends GenericInlineConfigCommand implements InlineConfi
     public const NAME = 'behavior:implement';
     public const DESCRIPTION = 'Creates a Trait from a given Interface';
     public const HIDDEN = false;
-    public const USAGES = ['@todo'];
+    public const USAGES = [ '@todo' ];
     public const HELP = <<<EOF
 The <info>%command.name%</info> command creates an trait from a given interface:
   <info>php %command.full_name% ClassName MethodName</info>
@@ -75,7 +75,7 @@ EOF;
     protected const FORCE_KEY = 'force';
 
     /**
-     * @param InputInterface $input
+     * @param \Symfony\Component\Console\Input\InputInterface $input
      * @param OutputInterface $output
      *
      * @return int|null|void
@@ -106,7 +106,7 @@ EOF;
      * @param null|string $traitName
      * @return bool
      */
-    private function confirmTraitGeneration(string $interfaceName, ?string $traitName)
+    private function confirmTraitGeneration(string $interfaceName, ? string $traitName)
     {
         return $this->getWriter()->confirm(
             self::CONFIRMATION_QUESTION,
