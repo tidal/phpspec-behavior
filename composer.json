@@ -14,7 +14,8 @@
   "prefer-stable": true,
   "require": {
     "php": ">=7.1.0",
-    "phpspec/phpspec": "^3.0"
+    "phpspec/phpspec": "^3.0",
+    "tidal/phpspec-console": "^0.1.0"
   },
   "require-dev": {
     "behat/behat": "^3.0,>=3.0.4",
@@ -23,7 +24,8 @@
   },
   "autoload": {
     "psr-4": {
-      "Tidal\\PhpSpec\\Behavior\\": "src"
+      "Tidal\\PhpSpec\\BehaviorExtension\\": "src",
+      "spec\\Tidal\\PhpSpec\\BehaviorExtension\\": "spec"
     }
   }
 }
