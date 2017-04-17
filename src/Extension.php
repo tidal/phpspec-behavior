@@ -8,15 +8,20 @@
  * file that was distributed with this source code.
  */
 
-namespace Tidal\PhpSpec\Behavior;
+namespace Tidal\PhpSpec\BehaviorExtension;
 
 use PhpSpec\Extension as ExtensionInterface;
 use PhpSpec\ServiceContainer;
-use Tidal\PhpSpec\Behavior\Command\ImplementCommand;
+use PhpSpec\Console\ConsoleIO;
+use Tidal\PhpSpec\BehaviorExtension\Console\Command\{
+    ImplementCommand
+};
+use Tidal\PhpSpec\ConsoleExtension\Writer;
+use Tidal\PhpSpec\ConsoleExtension\Command\InlineConfigurator;
 use Symfony\Component\Console\Command\Command;
 
 /**
- * class Tidal\PhpSpec\Behavior\Extension
+ * class Tidal\PhpSpec\BehaviorExtension\Behavior\Extension
  */
 class Extension implements ExtensionInterface
 {
@@ -25,6 +30,8 @@ class Extension implements ExtensionInterface
     public const COMMAND_IDS = [
         self::IMPLEMENT_KEY => 'console.commands.behavior_implement'
     ] ;
+
+    private const IO_ID = 'console.io';
 
     /**
      * @var Command
@@ -42,9 +49,16 @@ class Extension implements ExtensionInterface
 
     private function registerCommands(ServiceContainer $container)
     {
-        $container->define(self::COMMAND_IDS['implement'], function () use ($container) {
-            return $this->implementCommand;
-        });
+        $container->define(
+            self::COMMAND_IDS[self::IMPLEMENT_KEY],
+            function () use ($container) {
+                return $this->getImplementCommand(
+                    self::retrieveConsoleWriter($container),
+                    self::createConfigurator()
+                );
+            },
+            ['console.commands']
+        );
     }
 
     /**
@@ -56,12 +70,60 @@ class Extension implements ExtensionInterface
     }
 
     /**
+     * @param Writer $writer
      * @return Command
      */
-    public function getImplementCommand(): Command
+    public function getImplementCommand(Writer $writer, InlineConfigurator $configurator): Command
     {
         return isset($this->implementCommand)
             ? $this->implementCommand
-            : $this->implementCommand = new ImplementCommand();
+            : $this->implementCommand = self::createImplementCommand($writer, $configurator);
+    }
+
+    /**
+     * @param Writer $writer
+     * @return ImplementCommand
+     */
+    private static function createImplementCommand(Writer $writer, InlineConfigurator $configurator)
+    {
+        return new ImplementCommand($writer, $configurator);
+    }
+
+    /**
+     * @param ServiceContainer $container
+     * @return Writer
+     */
+    private static function retrieveConsoleWriter(ServiceContainer $container)
+    {
+        return self::createConsoleWriter(
+            self::retrieveConsoleIo($container)
+        );
+    }
+
+    /**
+     * @param ConsoleIO $io
+     * @return Writer
+     */
+    private static function createConsoleWriter(ConsoleIO $io)
+    {
+        return new Writer($io);
+    }
+
+    /**
+     * @return InlineConfigurator
+     */
+    private static function createConfigurator()
+    {
+        return new InlineConfigurator();
+    }
+
+    /**
+     * @param ServiceContainer $container
+     * @return object|ConsoleIO
+     */
+    private static function retrieveConsoleIo(ServiceContainer $container)
+    {
+        return $container->get(self::IO_ID);
     }
 }
+
