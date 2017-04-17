@@ -17,7 +17,6 @@ use Tidal\PhpSpec\ConsoleExtension\Writer;
 use Tidal\PhpSpec\ConsoleExtension\Contract\Command\ConfigInterface as Config;
 use Tidal\PhpSpec\ConsoleExtension\Command\InlineConfigurator;
 use Tidal\PhpSpec\BehaviorExtension\Console\Command\ImplementCommand;
-use spec\Tidal\PhpSpec\BehaviorExtension\Behavior\Command\IsConfigurableSpecTrait;
 use PhpSpec\ObjectBehavior;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -33,8 +32,7 @@ use Symfony\Component\Console\Input\InputDefinition;
 class ImplementCommandSpec extends ObjectBehavior
 {
     use UsesBehaviorSpecTrait,
-        UsesInterfaceSpecTrait,
-        IsConfigurableSpecTrait;
+        UsesInterfaceSpecTrait;
 
     private const CONFIG = [
         'NAME' => ImplementCommand::NAME,
