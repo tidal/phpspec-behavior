@@ -78,7 +78,7 @@ EOF;
      * @param \Symfony\Component\Console\Input\InputInterface $input
      * @param OutputInterface $output
      *
-     * @return int|null|void
+     * @return int|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -86,19 +86,21 @@ EOF;
         try {
             $this->demandInterface($interfaceName);
         } catch (\Throwable $e) {
-            return;
+            return 1;
         }
 
         $traitName = $input->getArgument(self::TRAIT_INPUT);
 
         if (!$this->validateTrait($traitName) && !$input->getOption(self::FORCE_KEY)) {
-            return;
+            return 0;
         }
 
 
         if (!$this->confirmTraitGeneration($interfaceName, $traitName)) {
-            return;
+            return 0;
         }
+
+        return 0;
     }
 
     /**
