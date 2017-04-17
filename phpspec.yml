@@ -1,6 +1,7 @@
 suites:
     behavior_suite:
-        namespace: Tidal\PhpSpec\Behavior
-        psr4_prefix: Tidal\PhpSpec\Behavior
+        namespace: Tidal\PhpSpec\BehaviorExtension
+        psr4_prefix: Tidal\PhpSpec\BehaviorExtension
 extensions:
     Memio\SpecGen\MemioSpecGenExtension: ~
+    #Tidal\PhpSpec\BehaviorExtension\Extension: ~
