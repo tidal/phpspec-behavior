@@ -24,7 +24,7 @@ trait UsesInterfaceTrait
      */
     public function validateInterface(string $interfaceName)
     {
-        return interface_exists($interfaceName);
+        return interface_exists(str_replace('/', '\\', $interfaceName));
     }
 
     /**
