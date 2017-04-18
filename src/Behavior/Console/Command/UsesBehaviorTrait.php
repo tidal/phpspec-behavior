@@ -20,6 +20,6 @@ trait UsesBehaviorTrait
      */
     public function validateTrait(? string $traitName) : bool
     {
-        return trait_exists($traitName);
+        return trait_exists(str_replace('/', '\\', $traitName));
     }
 }
