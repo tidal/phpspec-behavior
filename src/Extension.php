@@ -34,7 +34,7 @@ class Extension implements ExtensionInterface
     private const IO_ID = 'console.io';
 
     /**
-     * @var Command
+     * @var ImplementCommand
      */
     private $implementCommand;
 
@@ -49,15 +49,24 @@ class Extension implements ExtensionInterface
 
     private function registerCommands(ServiceContainer $container)
     {
+        $this->registerImplementCommand($container);
+    }
+
+    private function registerImplementCommand(ServiceContainer $container)
+    {
         $container->define(
             self::COMMAND_IDS[ self::IMPLEMENT_KEY ],
             function() use ($container) {
-                return $this->getImplementCommand(
+                /** @var ImplementCommand $command */
+                $command = $this->getImplementCommand(
                     self::retrieveConsoleWriter($container),
                     self::createConfigurator()
                 );
+                $command->setContainer($container);
+
+                return $command;
             },
-            [ 'console.commands' ]
+            ['console.commands']
         );
     }
 
@@ -71,9 +80,9 @@ class Extension implements ExtensionInterface
 
     /**
      * @param Writer $writer
-     * @return Command
+     * @return ImplementCommand
      */
-    public function getImplementCommand(Writer $writer, InlineConfigurator $configurator): Command
+    public function getImplementCommand(Writer $writer, InlineConfigurator $configurator): ImplementCommand
     {
         return isset($this->implementCommand)
             ? $this->implementCommand
@@ -84,7 +93,7 @@ class Extension implements ExtensionInterface
      * @param Writer $writer
      * @return ImplementCommand
      */
-    private static function createImplementCommand(Writer $writer, InlineConfigurator $configurator)
+    private static function createImplementCommand(Writer $writer, InlineConfigurator $configurator): ImplementCommand
     {
         return new ImplementCommand($writer, $configurator);
     }

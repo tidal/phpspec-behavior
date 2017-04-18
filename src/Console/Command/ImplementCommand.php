@@ -20,10 +20,14 @@ use Symfony\Component\Console\Input\{
 use Tidal\PhpSpec\ConsoleExtension\Command\GenericInlineConfigCommand;
 use Tidal\PhpSpec\ConsoleExtension\Contract\Command\InlineConfigCommandInterface;
 
+use Tidal\PhpSpec\BehaviorExtension\Behavior\Container\HasContainerTrait;
 use Tidal\PhpSpec\BehaviorExtension\Behavior\Console\Command\{
     UsesInterfaceTrait,
     UsesBehaviorTrait
 };
+
+use PhpSpec\Locator\ResourceManager;
+use PhpSpec\CodeGenerator\Generator\Generator;
 
 /**
  * class Tidal\PhpSpec\Behavior\Command\ImplementCommand
@@ -32,7 +36,8 @@ class ImplementCommand extends GenericInlineConfigCommand implements InlineConfi
 {
     use
         UsesInterfaceTrait,
-        UsesBehaviorTrait;
+        UsesBehaviorTrait,
+        HasContainerTrait;
 
     /**
      * CONFIG
@@ -65,7 +70,8 @@ EOF;
         ]
     ];
 
-    protected const CONFIRMATION_QUESTION = 'Do you want to generate a Trait for Interface %s?';
+    protected const INTERFACE_CONFIRMATION_QUESTION = 'Interface %s? does not exist. Do you want to generate it?';
+    protected const TRAIT_CONFIRMATION_QUESTION = 'Do you want to generate a Trait for Interface %s?';
 
     protected const INTERFACE_INPUT = 'interface';
     protected const TRAIT_INPUT = 'trait';
@@ -73,6 +79,9 @@ EOF;
     protected const MODE_KEY = 'mode';
     protected const DESCRIPTION_KEY = 'description';
     protected const FORCE_KEY = 'force';
+
+    protected const RESOURCE_MANAGER_ID = 'locator.resource_manager';
+    protected const CODE_GENERATOR_ID = 'code_generator';
 
     /**
      * @param \Symfony\Component\Console\Input\InputInterface $input
@@ -82,11 +91,17 @@ EOF;
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        if (method_exists($this->getContainer(), 'configure')) {
+            $this->getContainer()->configure();
+        }
+
         $interfaceName = $input->getArgument(self::INTERFACE_INPUT);
-        try {
-            $this->demandInterface($interfaceName);
-        } catch (\Throwable $e) {
-            return 1;
+
+        if (!$this->validateInterface($interfaceName) && $this->confirmInterfaceGeneration($interfaceName)) {
+            $this->retrieveCodeGenerator()->generate(
+                $this->retrieveResourceManager()->createResource($interfaceName),
+                ['interface']
+            );
         }
 
         $traitName = $input->getArgument(self::TRAIT_INPUT);
@@ -94,7 +109,6 @@ EOF;
         if (!$this->validateTrait($traitName) && !$input->getOption(self::FORCE_KEY)) {
             return 0;
         }
-
 
         if (!$this->confirmTraitGeneration($interfaceName, $traitName)) {
             return 0;
@@ -105,18 +119,48 @@ EOF;
 
     /**
      * @param string $interfaceName
+     * @return bool
+     */
+    private function confirmInterfaceGeneration(string $interfaceName)
+    {
+        return $this->getWriter()->confirm(
+            self::INTERFACE_CONFIRMATION_QUESTION,
+            [
+                $interfaceName
+            ]
+        );
+    }
+
+    /**
+     * @param string $interfaceName
      * @param null|string $traitName
      * @return bool
      */
     private function confirmTraitGeneration(string $interfaceName, ? string $traitName)
     {
         return $this->getWriter()->confirm(
-            self::CONFIRMATION_QUESTION,
+            self::TRAIT_CONFIRMATION_QUESTION,
             [
                 $interfaceName,
                 $traitName
             ]
         );
+    }
+
+    /**
+     * @return object|ResourceManager
+     */
+    protected function retrieveResourceManager()
+    {
+        return $this->getContainer()->get(self::RESOURCE_MANAGER_ID);
+    }
+
+    /**
+     * @return object|Generator
+     */
+    protected function retrieveCodeGenerator()
+    {
+        return $this->getContainer()->get(self::CODE_GENERATOR_ID);
     }
 }
 
