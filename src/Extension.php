@@ -66,7 +66,7 @@ class Extension implements ExtensionInterface
 
                 return $command;
             },
-            ['console.commands']
+            [ 'console.commands' ]
         );
     }
 
@@ -80,7 +80,7 @@ class Extension implements ExtensionInterface
 
     /**
      * @param Writer $writer
-     * @return ImplementCommand
+     * @return Console\Command\ImplementCommand
      */
     public function getImplementCommand(Writer $writer, InlineConfigurator $configurator): ImplementCommand
     {
@@ -91,7 +91,7 @@ class Extension implements ExtensionInterface
 
     /**
      * @param Writer $writer
-     * @return ImplementCommand
+     * @return Console\Command\ImplementCommand
      */
     private static function createImplementCommand(Writer $writer, InlineConfigurator $configurator): ImplementCommand
     {
@@ -131,7 +131,7 @@ class Extension implements ExtensionInterface
 
     /**
      * @param ServiceContainer $container
-     * @return object|ConsoleIO
+     * @return ConsoleIO
      */
     private static function retrieveConsoleIo(ServiceContainer $container)
     {
