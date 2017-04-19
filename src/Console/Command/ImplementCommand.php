@@ -27,7 +27,7 @@ use Tidal\PhpSpec\BehaviorExtension\Behavior\Console\Command\{
 };
 
 use PhpSpec\Locator\ResourceManager;
-use PhpSpec\CodeGenerator\Generator\Generator;
+use PhpSpec\CodeGenerator\GeneratorManager;
 
 /**
  * class Tidal\PhpSpec\Behavior\Command\ImplementCommand
@@ -79,9 +79,10 @@ EOF;
     protected const MODE_KEY = 'mode';
     protected const DESCRIPTION_KEY = 'description';
     protected const FORCE_KEY = 'force';
+    protected const INTERFACE_KEY = 'interface';
 
     protected const RESOURCE_MANAGER_ID = 'locator.resource_manager';
-    protected const CODE_GENERATOR_ID = 'code_generator';
+    protected const GENERATOR_MANAGER_ID = 'code_generator';
 
     /**
      * @param \Symfony\Component\Console\Input\InputInterface $input
@@ -98,9 +99,9 @@ EOF;
         $interfaceName = $input->getArgument(self::INTERFACE_INPUT);
 
         if (!$this->validateInterface($interfaceName) && $this->confirmInterfaceGeneration($interfaceName)) {
-            $this->retrieveCodeGenerator()->generate(
+            $this->retrieveGeneratorManager()->generate(
                 $this->retrieveResourceManager()->createResource($interfaceName),
-                'interface'
+                self::INTERFACE_KEY
             );
         }
 
@@ -156,11 +157,11 @@ EOF;
     }
 
     /**
-     * @return object|Generator
+     * @return object|GeneratorManager
      */
-    protected function retrieveCodeGenerator()
+    protected function retrieveGeneratorManager()
     {
-        return $this->getContainer()->get(self::CODE_GENERATOR_ID);
+        return $this->getContainer()->get(self::GENERATOR_MANAGER_ID);
     }
 }
 
