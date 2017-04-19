@@ -100,7 +100,7 @@ EOF;
         if (!$this->validateInterface($interfaceName) && $this->confirmInterfaceGeneration($interfaceName)) {
             $this->retrieveCodeGenerator()->generate(
                 $this->retrieveResourceManager()->createResource($interfaceName),
-                ['interface']
+                'interface'
             );
         }
 
