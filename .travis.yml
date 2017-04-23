@@ -15,3 +15,4 @@ before_script:
 
 script:
   - ./vendor/bin/phpspec run --no-interaction
+  - ./vendor/bin/behat -n
