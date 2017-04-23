@@ -18,16 +18,19 @@ use Symfony\Component\Console\Input\{
 };
 
 use Tidal\PhpSpec\ConsoleExtension\Command\GenericInlineConfigCommand;
+use Tidal\PhpSpec\ConsoleExtension\Contract\Command\ConfiguratorInterface;
 use Tidal\PhpSpec\ConsoleExtension\Contract\Command\InlineConfigCommandInterface;
+use Tidal\PhpSpec\ConsoleExtension\Contract\Command\ConfigInterface as Config;
 
-use Tidal\PhpSpec\BehaviorExtension\Behavior\Container\HasContainerTrait;
 use Tidal\PhpSpec\BehaviorExtension\Behavior\Console\Command\{
     UsesInterfaceTrait,
-    UsesBehaviorTrait
+    UsesBehaviorTrait,
+    CommandTrait
 };
 
 use PhpSpec\Locator\ResourceManager;
 use PhpSpec\CodeGenerator\GeneratorManager;
+use Tidal\PhpSpec\ConsoleExtension\Contract\WriterInterface;
 
 /**
  * class Tidal\PhpSpec\Behavior\Command\ImplementCommand
@@ -37,7 +40,7 @@ class ImplementCommand extends GenericInlineConfigCommand implements InlineConfi
     use
         UsesInterfaceTrait,
         UsesBehaviorTrait,
-        HasContainerTrait;
+        CommandTrait;
 
     /**
      * CONFIG
@@ -54,19 +57,24 @@ EOF;
 
     public const ARGUMENTS = [
         self::INTERFACE_INPUT => [
-            self::MODE_KEY => InputArgument::REQUIRED,
-            self::DESCRIPTION_KEY => 'Interface to create behavior for'
+            Config::MODE_KEY => InputArgument::REQUIRED,
+            Config::DESCRIPTION_KEY => 'Interface to create behavior for'
         ],
         self::TRAIT_INPUT => [
-            self::MODE_KEY => InputArgument::OPTIONAL,
-            self::DESCRIPTION_KEY => 'Custom trait class name'
+            Config::MODE_KEY => InputArgument::OPTIONAL,
+            Config::DESCRIPTION_KEY => 'Custom trait class name'
         ]
     ];
 
     public const OPTIONS = [
         self::FORCE_KEY => [
-            self::MODE_KEY => InputOption::VALUE_NONE,
-            self::DESCRIPTION_KEY => 'Force creation of Trait without asking for confirmation'
+            Config::MODE_KEY => InputOption::VALUE_NONE,
+            Config::DESCRIPTION_KEY => 'Force creation of Trait without asking for confirmation',
+            Config::SHORTCUT_KEY => 'f'
+        ],
+        self::QUITE_KEY => [
+            Config::MODE_KEY => InputOption::VALUE_NONE,
+            Config::DESCRIPTION_KEY => 'Force creation of Trait without asking for confirmation'
         ]
     ];
 
@@ -76,74 +84,54 @@ EOF;
     protected const INTERFACE_INPUT = 'interface';
     protected const TRAIT_INPUT = 'trait';
 
-    protected const MODE_KEY = 'mode';
-    protected const DESCRIPTION_KEY = 'description';
     protected const FORCE_KEY = 'force';
+    protected const QUITE_KEY = 'quite';
     protected const INTERFACE_KEY = 'interface';
 
     protected const RESOURCE_MANAGER_ID = 'locator.resource_manager';
     protected const GENERATOR_MANAGER_ID = 'code_generator';
 
     /**
-     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @var string
+     */
+    protected $interfaceName;
+
+    public function __construct(WriterInterface $writer, ConfiguratorInterface $configurator, $config = [])
+    {
+        $config['name'] = self::NAME;
+        parent::__construct($writer, $configurator, $config);
+    }
+
+    /**
+     * @param InputInterface $input
      * @param OutputInterface $output
      *
      * @return int|null
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if (method_exists($this->getContainer(), 'configure')) {
-            $this->getContainer()->configure();
-        }
+        $this->setPuts($input, $output);
 
-        $interfaceName = $input->getArgument(self::INTERFACE_INPUT);
+        $this->configureContainer();
 
-        if (!$this->validateInterface($interfaceName) && $this->confirmInterfaceGeneration($interfaceName)) {
-            $this->retrieveGeneratorManager()->generate(
-                $this->retrieveResourceManager()->createResource($interfaceName),
-                self::INTERFACE_KEY
-            );
-        }
-
-        $traitName = $input->getArgument(self::TRAIT_INPUT);
-
-        if (!$this->validateTrait($traitName) && !$input->getOption(self::FORCE_KEY)) {
-            return 0;
-        }
-
-        if (!$this->confirmTraitGeneration($interfaceName, $traitName)) {
-            return 0;
-        }
+        $this->ensureInterfaceExists();
 
         return 0;
     }
 
     /**
-     * @param string $interfaceName
      * @return bool
      */
-    private function confirmInterfaceGeneration(string $interfaceName)
+    private function confirmInterfaceGeneration()
     {
+        if ((bool)$this->getInput()->getOption(self::FORCE_KEY)) {
+            return true;
+        }
+
         return $this->getWriter()->confirm(
             self::INTERFACE_CONFIRMATION_QUESTION,
             [
-                $interfaceName
-            ]
-        );
-    }
-
-    /**
-     * @param string $interfaceName
-     * @param null|string $traitName
-     * @return bool
-     */
-    private function confirmTraitGeneration(string $interfaceName, ? string $traitName)
-    {
-        return $this->getWriter()->confirm(
-            self::TRAIT_CONFIRMATION_QUESTION,
-            [
-                $interfaceName,
-                $traitName
+                $this->getInput()->getArgument(self::INTERFACE_INPUT)
             ]
         );
     }
@@ -162,6 +150,56 @@ EOF;
     protected function retrieveGeneratorManager()
     {
         return $this->getContainer()->get(self::GENERATOR_MANAGER_ID);
+    }
+
+    protected function ensureInterfaceExists()
+    {
+        if (!$this->validateInterfaceInput() && $this->confirmInterfaceGeneration()) {
+            $this->createInterface();
+        }
+    }
+
+    protected function createInterface()
+    {
+        $this->retrieveGeneratorManager()->generate(
+            $this->retrieveResourceManager()->createResource(
+                $this->getInterfaceName()
+            ),
+            self::INTERFACE_KEY
+        );
+    }
+
+    protected function getInterfaceInput(InputInterface $input)
+    {
+        return $input->getArgument(self::INTERFACE_INPUT);
+    }
+
+    protected function validateInterfaceInput()
+    {
+        return $this->validateInterface(
+            $this->getInterfaceInput(
+                $this->getInput()
+            )
+        );
+    }
+
+    /**
+     * @param string $interfaceName
+     */
+    protected function setInterfaceName(string $interfaceName)
+    {
+        $this->interfaceName = $interfaceName;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getInterfaceName(): string
+    {
+        return isset($this->interfaceName)
+            ? $this->interfaceName
+            : $this->interfaceName = $this->getInput()
+                ->getArgument(self::INTERFACE_INPUT);
     }
 }
 

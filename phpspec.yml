@@ -5,3 +5,5 @@ suites:
 extensions:
     Memio\SpecGen\MemioSpecGenExtension: ~
     #Tidal\PhpSpec\BehaviorExtension\Extension: ~
+    RMiller\BehatSpec\Extension\BehatSpecExtension\BehatExtension:
+        path:  vendor/bin/phpspec
