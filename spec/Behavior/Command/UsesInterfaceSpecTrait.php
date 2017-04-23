@@ -11,7 +11,6 @@ namespace spec\Tidal\PhpSpec\BehaviorExtension\Behavior\Command;
 
 use Tidal\PhpSpec\BehaviorExtension\Exception\NoInterfaceException;
 use Tidal\PhpSpec\ConsoleExtension\Writer;
-use PhpSpec\Console\ConsoleIO;
 use Prophecy\Prophecy\ObjectProphecy;
 use Prophecy\{
     Argument,
@@ -38,21 +37,21 @@ trait UsesInterfaceSpecTrait
             ->shouldReturn(false);
     }
 
-    function it_throws_no_exception_on_existing_interfaces()
+    function it_does_not_throw_exception_when_requiring_existing_interfaces()
     {
         $this
             ->shouldNotThrow(NoInterfaceException::class)
             ->during('requireInterface', array(Bar::class));
     }
 
-    function it_throws_exception_on_non_existing_interfaces()
+    function it_throws_exception_when_requiring_non_existing_interfaces()
     {
         $this
             ->shouldThrow(NoInterfaceException::class)
             ->during('requireInterface', array('foo'));
     }
 
-    function it_does_not_write_error_on_existing_interfaces()
+    function it_does_not_write_error_when_demanding_existing_interfaces()
     {
         $prophecy = $this->createWriterProphecy();
         $prophecy->writeError(Argument::type('string'))
@@ -67,7 +66,7 @@ trait UsesInterfaceSpecTrait
             ->during('demandInterface', array(Bar::class));
     }
 
-    function it_writes_error_on_non_existing_interfaces()
+    function it_writes_error_when_demanding_non_existing_interfaces()
     {
         $prophecy = $this->createWriterProphecy();
         $prophecy->writeError(Argument::type('string'))->shouldBeCalled();

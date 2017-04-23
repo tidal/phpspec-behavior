@@ -1,0 +1,13 @@
+
+default:
+  suites:
+    code_generation:
+      paths:    [ %paths.base%/features/code_generation ]
+      contexts:
+        - features\Context\CodeGeneration\GenerateInterfaceContext
+        - features\Context\Console\Command\ImplementContext
+
+extensions:
+  RMiller\BehatSpec\Extension\BehatSpecExtension\BehatExtension:
+    path:  vendor/bin/phpspec
+    config:  .phpspec.yml
