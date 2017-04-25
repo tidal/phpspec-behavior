@@ -26,7 +26,11 @@
   },
   "autoload": {
     "psr-4": {
-      "Tidal\\PhpSpec\\BehaviorExtension\\": "src",
+      "Tidal\\PhpSpec\\BehaviorExtension\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
       "spec\\Tidal\\PhpSpec\\BehaviorExtension\\": "spec",
       "features\\": "features"
     }
